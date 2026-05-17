@@ -1,0 +1,461 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font-sans);color:var(--color-text-primary);font-size:15px}
+.app{max-width:480px;margin:0 auto;padding:0 0 80px}
+.topbar{padding:14px 16px 0;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-size:17px;font-weight:500}
+.topbar-sub{font-size:12px;color:var(--color-text-tertiary);margin-top:2px}
+.bottomnav{display:flex;border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);padding:6px 0 env(safe-area-inset-bottom,6px)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;border:none;background:none;color:var(--color-text-tertiary);font-size:10px;font-family:var(--font-sans)}
+.nav-item.active{color:#1D9E75}
+.nav-item i{font-size:22px}
+.screen{display:none;padding:14px 16px}
+.screen.active{display:block}
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 8px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin-bottom:10px}
+.field-row{display:flex;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--color-border-tertiary);gap:10px}
+.field-row:last-child{border-bottom:none}
+.field-label{font-size:13px;color:var(--color-text-secondary);width:52px;flex-shrink:0}
+.field-val{font-size:15px;font-weight:500;flex:1}
+select,input[type=number],input[type=text]{font-size:15px;padding:0;border:none;background:none;color:var(--color-text-primary);font-family:var(--font-sans);width:100%;outline:none;-webkit-appearance:none;appearance:none}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0 center;padding-right:18px}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:14px;border-radius:var(--border-radius-lg);border:none;font-size:15px;font-weight:500;font-family:var(--font-sans);cursor:pointer;margin-top:6px}
+.btn-primary{background:#1D9E75;color:#fff}
+.btn-primary:active{opacity:0.85}
+.btn-danger{background:var(--color-background-primary);color:#A32D2D;border:0.5px solid #F0ABAB}
+.btn-export{background:#185FA5;color:#fff}
+.stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.stat-val{font-size:22px;font-weight:500}
+.stat-lbl{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.list-item{display:flex;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--color-border-tertiary);gap:10px}
+.list-item:last-child{border-bottom:none}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
+.hint{font-size:13px;padding:8px 12px;border-radius:var(--border-radius-md);margin:6px 0}
+.hint-ok{background:#EAF3DE;color:#27500A}
+.hint-warn{background:#FAEEDA;color:#633806}
+.hint-err{background:#FCEBEB;color:#A32D2D}
+.hint-info{background:#E6F1FB;color:#0C447C}
+#toast{position:relative;margin:0 16px 8px;padding:11px 14px;border-radius:var(--border-radius-md);font-size:14px;font-weight:500;display:none}
+.toast-ok{background:#EAF3DE;color:#27500A}
+.toast-err{background:#FCEBEB;color:#A32D2D}
+.progress-wrap{height:6px;background:var(--color-background-secondary);border-radius:6px;overflow:hidden;margin-top:6px}
+.progress-bar{height:6px;border-radius:6px}
+.bar-ok{background:#639922}.bar-warn{background:#EF9F27}.bar-err{background:#E24B4A}
+.stock-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.stock-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.type-action-row{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.type-action-row:last-child{border-bottom:none}
+.pill-tag{display:inline-flex;align-items:center;gap:5px;background:var(--color-background-secondary);padding:5px 10px;border-radius:20px;font-size:13px;margin:4px}
+.del-btn{background:none;border:none;color:var(--color-text-tertiary);font-size:18px;cursor:pointer;padding:0 2px;line-height:1}
+.empty{color:var(--color-text-tertiary);font-size:13px;text-align:center;padding:20px 0}
+.salary-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.salary-row:last-child{border-bottom:none}
+.salary-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden">工人计件台账移动端</h2>
+
+<div class="app">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">计件台账</div>
+      <div class="topbar-sub">数据自动保存到本地</div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <div id="s-take" class="screen active">
+    <div id="stock-mini"></div>
+    <div class="section-label">领货登记</div>
+    <div class="card">
+      <div class="field-row">
+        <span class="field-label">工人</span>
+        <div class="field-val"><select id="tk-w"><option value="">选择工人</option></select></div>
+      </div>
+      <div class="field-row">
+        <span class="field-label">货型</span>
+        <div class="field-val"><select id="tk-t" onchange="tkHint()"><option value="">选择货型</option></select></div>
+      </div>
+      <div class="field-row">
+        <span class="field-label">数量</span>
+        <div class="field-val"><input type="number" id="tk-q" value="100" min="1" inputmode="numeric"></div>
+      </div>
+    </div>
+    <div id="tk-hint"></div>
+    <button class="btn btn-primary" onclick="doTake()"><i class="ti ti-circle-check" aria-hidden="true"></i>记录领货</button>
+
+    <div class="section-label" style="margin-top:20px">今日记录</div>
+    <div class="card" id="take-list"><div class="empty">暂无记录</div></div>
+  </div>
+
+  <div id="s-return" class="screen">
+    <div class="section-label">交货登记</div>
+    <div class="card">
+      <div class="field-row">
+        <span class="field-label">工人</span>
+        <div class="field-val"><select id="rt-w" onchange="rtHint()"><option value="">选择工人</option></select></div>
+      </div>
+      <div class="field-row">
+        <span class="field-label">货型</span>
+        <div class="field-val"><select id="rt-t" onchange="rtHint()"><option value="">选择货型</option></select></div>
+      </div>
+      <div class="field-row">
+        <span class="field-label">数量</span>
+        <div class="field-val"><input type="number" id="rt-q" value="100" min="1" inputmode="numeric"></div>
+      </div>
+    </div>
+    <div id="rt-hint"></div>
+    <button class="btn btn-primary" onclick="doReturn()"><i class="ti ti-circle-check" aria-hidden="true"></i>记录交货</button>
+
+    <div class="section-label" style="margin-top:20px">交货记录</div>
+    <div class="card" id="ret-list"><div class="empty">暂无记录</div></div>
+  </div>
+
+  <div id="s-salary" class="screen">
+    <div class="section-label">工资汇总</div>
+    <div class="card" id="salary-list"><div class="empty">暂无工人</div></div>
+    <div id="salary-total" style="font-size:15px;font-weight:500;text-align:right;margin-top:10px;color:#27500A"></div>
+    <button class="btn btn-export" style="margin-top:12px" onclick="exportXlsx()"><i class="ti ti-download" aria-hidden="true"></i>导出 Excel</button>
+  </div>
+
+  <div id="s-stock" class="screen">
+    <div id="sv-stats" class="stat-grid"></div>
+    <div class="section-label">货型库存</div>
+    <div class="card" id="sv-types"></div>
+    <div class="section-label">工人手持</div>
+    <div class="card" id="sv-workers"><div class="empty">暂无</div></div>
+    <button class="btn btn-export" style="margin-top:12px" onclick="exportXlsx()"><i class="ti ti-download" aria-hidden="true"></i>导出 Excel</button>
+  </div>
+
+  <div id="s-config" class="screen">
+    <div class="section-label">货型</div>
+    <div class="card" id="type-list"></div>
+    <div class="card" style="padding:12px 14px;margin-top:6px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <input type="text" id="nt-name" placeholder="货型名称" style="border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:9px 10px;font-size:14px;font-family:var(--font-sans);background:var(--color-background-primary);color:var(--color-text-primary)">
+        <input type="number" id="nt-stock" placeholder="总库存" min="1" inputmode="numeric" style="border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:9px 10px;font-size:14px;font-family:var(--font-sans);background:var(--color-background-primary);color:var(--color-text-primary)">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <input type="number" id="nt-rate" placeholder="单价(元/件)" step="0.01" min="0.01" inputmode="decimal" style="border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:9px 10px;font-size:14px;font-family:var(--font-sans);background:var(--color-background-primary);color:var(--color-text-primary)">
+        <button class="btn btn-primary" style="margin:0;padding:9px" onclick="addType()"><i class="ti ti-plus" aria-hidden="true"></i>添加</button>
+      </div>
+    </div>
+
+    <div class="section-label">工人名单</div>
+    <div id="worker-tags" style="display:flex;flex-wrap:wrap;padding:4px 0;margin-bottom:6px"></div>
+    <div class="card" style="padding:12px 14px">
+      <div style="display:flex;gap:8px">
+        <input type="text" id="nw-name" placeholder="姓名" style="flex:1;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:9px 10px;font-size:14px;font-family:var(--font-sans);background:var(--color-background-primary);color:var(--color-text-primary)">
+        <button class="btn btn-primary" style="margin:0;width:auto;padding:9px 16px" onclick="addWorker()">添加</button>
+      </div>
+    </div>
+
+    <div class="section-label">数据管理</div>
+    <button class="btn btn-danger" onclick="clearAll()"><i class="ti ti-trash" aria-hidden="true"></i>清空所有数据</button>
+  </div>
+</div>
+
+<div class="bottomnav">
+  <button class="nav-item active" onclick="showTab('take',this)" aria-label="领货">
+    <i class="ti ti-package" aria-hidden="true"></i>领货
+  </button>
+  <button class="nav-item" onclick="showTab('return',this)" aria-label="交货">
+    <i class="ti ti-circle-check" aria-hidden="true"></i>交货
+  </button>
+  <button class="nav-item" onclick="showTab('salary',this)" aria-label="工资">
+    <i class="ti ti-coin" aria-hidden="true"></i>工资
+  </button>
+  <button class="nav-item" onclick="showTab('stock',this)" aria-label="总览">
+    <i class="ti ti-chart-bar" aria-hidden="true"></i>总览
+  </button>
+  <button class="nav-item" onclick="showTab('config',this)" aria-label="配置">
+    <i class="ti ti-settings" aria-hidden="true"></i>配置
+  </button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const KEY='workshop_mobile_v1';
+const COLORS=['#1D9E75','#378ADD','#BA7517','#D85A30','#7F77DD','#D4537E','#639922','#5F5E5A'];
+let S={types:[{name:'A货',rate:0.20,stock:500},{name:'B货',rate:0.10,stock:500},{name:'C货',rate:0.50,stock:500}],workers:[],takes:[],returns:[]};
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(){try{const d=localStorage.getItem(KEY);if(d){const p=JSON.parse(d);if(p&&p.types)S=p}}catch(e){}}
+
+function gc(i){return COLORS[i%COLORS.length]}
+function fmt(){const n=new Date();return n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0')}
+
+let _toastT;
+function toast(txt,ok=true){
+  const el=document.getElementById('toast');
+  el.textContent=txt;el.className=ok?'toast-ok':'toast-err';el.style.display='block';
+  clearTimeout(_toastT);_toastT=setTimeout(()=>el.style.display='none',3000);
+}
+
+function showTab(t,btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+t).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(t==='take'){renderStockMini();refreshSelects()}
+  if(t==='return'){refreshSelects();rtHint()}
+  if(t==='salary')renderSalary();
+  if(t==='stock')renderStock();
+}
+
+function getLeft(ti){return S.types[ti].stock-S.takes.filter(x=>x.ti===ti).reduce((a,x)=>a+x.qty,0)}
+function getHold(wi,ti){
+  return S.takes.filter(x=>x.wi===wi&&x.ti===ti).reduce((a,x)=>a+x.qty,0)
+        -S.returns.filter(x=>x.wi===wi&&x.ti===ti).reduce((a,x)=>a+x.qty,0);
+}
+
+function refreshSelects(){
+  ['tk-w','rt-w'].forEach(id=>{
+    const s=document.getElementById(id),v=s.value;
+    s.innerHTML='<option value="">选择工人</option>'+S.workers.map((w,i)=>`<option value="${i}"${i==v?' selected':''}>${w}</option>`).join('');
+  });
+  ['tk-t','rt-t'].forEach(id=>{
+    const s=document.getElementById(id),v=s.value;
+    s.innerHTML='<option value="">选择货型</option>'+S.types.map((t,i)=>`<option value="${i}"${i==v?' selected':''}>${t.name}</option>`).join('');
+  });
+}
+
+function renderStockMini(){
+  const el=document.getElementById('stock-mini');
+  if(!S.types.length){el.innerHTML='';return;}
+  el.innerHTML='<div class="stock-mini-grid">'+S.types.map((t,i)=>{
+    const left=getLeft(i),pct=Math.max(0,Math.min(100,left/t.stock*100));
+    const bc=pct>40?'bar-ok':pct>15?'bar-warn':'bar-err';
+    const tc=pct>40?'#27500A':pct>15?'#633806':'#A32D2D';
+    return `<div class="stock-card">
+      <div style="font-size:11px;font-weight:500;color:${gc(i)}">${t.name}</div>
+      <div style="font-size:20px;font-weight:500;color:${tc}">${left}<span style="font-size:11px;color:var(--color-text-secondary)">/${t.stock}</span></div>
+      <div class="progress-wrap"><div class="progress-bar ${bc}" style="width:${pct.toFixed(1)}%"></div></div>
+      <div style="font-size:11px;color:var(--color-text-secondary)">仓库剩余</div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+function tkHint(){
+  const ti=parseInt(document.getElementById('tk-t').value);
+  const el=document.getElementById('tk-hint');
+  if(isNaN(ti)||!S.types[ti]){el.innerHTML='';return;}
+  const left=getLeft(ti),pct=left/S.types[ti].stock*100;
+  const cls=pct>40?'hint-ok':pct>15?'hint-warn':'hint-err';
+  el.innerHTML=`<div class="hint ${cls}">仓库剩余 ${left} 件</div>`;
+}
+
+function doTake(){
+  const wi=parseInt(document.getElementById('tk-w').value);
+  const ti=parseInt(document.getElementById('tk-t').value);
+  const qty=parseInt(document.getElementById('tk-q').value)||0;
+  if(isNaN(wi)){toast('请选择工人',false);return}
+  if(isNaN(ti)){toast('请选择货型',false);return}
+  if(qty<=0){toast('数量必须大于0',false);return}
+  const left=getLeft(ti);
+  if(qty>left){toast(`仓库仅剩${left}件，不够领${qty}件`,false);return}
+  S.takes.push({time:fmt(),wi,ti,qty});save();
+  renderTakeList();renderStockMini();tkHint();
+  toast(`${S.workers[wi]} 领 ${S.types[ti].name} ${qty}件`);
+}
+
+function renderTakeList(){
+  const el=document.getElementById('take-list');
+  if(!S.takes.length){el.innerHTML='<div class="empty">暂无记录</div>';return}
+  el.innerHTML=[...S.takes].reverse().map((t,ri)=>{
+    const i=S.takes.length-1-ri;
+    return `<div class="list-item">
+      <span class="badge" style="background:${gc(t.ti)}22;color:${gc(t.ti)};flex-shrink:0">${S.types[t.ti]?.name??'-'}</span>
+      <div style="flex:1">
+        <div style="font-weight:500;font-size:14px">${S.workers[t.wi]??'-'}</div>
+        <div style="font-size:12px;color:var(--color-text-secondary)">${t.time} · ${t.qty}件</div>
+      </div>
+      <button class="del-btn" onclick="delTake(${i})" aria-label="删除">×</button>
+    </div>`;
+  }).join('');
+}
+
+function delTake(i){S.takes.splice(i,1);save();renderTakeList();renderStockMini()}
+
+function rtHint(){
+  const wi=parseInt(document.getElementById('rt-w').value);
+  const ti=parseInt(document.getElementById('rt-t').value);
+  const el=document.getElementById('rt-hint');
+  if(isNaN(wi)||isNaN(ti)){el.innerHTML='';return}
+  const h=getHold(wi,ti);
+  el.innerHTML=`<div class="hint ${h>0?'hint-info':'hint-err'}">${S.workers[wi]} 手持 ${S.types[ti]?.name??''} ${h} 件</div>`;
+}
+
+function doReturn(){
+  const wi=parseInt(document.getElementById('rt-w').value);
+  const ti=parseInt(document.getElementById('rt-t').value);
+  const qty=parseInt(document.getElementById('rt-q').value)||0;
+  if(isNaN(wi)){toast('请选择工人',false);return}
+  if(isNaN(ti)){toast('请选择货型',false);return}
+  if(qty<=0){toast('数量必须大于0',false);return}
+  const h=getHold(wi,ti);
+  if(qty>h){toast(`手持仅${h}件，不能交${qty}件`,false);return}
+  S.returns.push({time:fmt(),wi,ti,qty});save();
+  renderRetList();rtHint();
+  toast(`${S.workers[wi]} 交 ${S.types[ti].name} ${qty}件`);
+}
+
+function renderRetList(){
+  const el=document.getElementById('ret-list');
+  if(!S.returns.length){el.innerHTML='<div class="empty">暂无记录</div>';return}
+  el.innerHTML=[...S.returns].reverse().map(r=>`
+    <div class="list-item">
+      <span class="badge" style="background:${gc(r.ti)}22;color:${gc(r.ti)};flex-shrink:0">${S.types[r.ti]?.name??'-'}</span>
+      <div style="flex:1">
+        <div style="font-weight:500;font-size:14px">${S.workers[r.wi]??'-'}</div>
+        <div style="font-size:12px;color:var(--color-text-secondary)">${r.time} · ${r.qty}件</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderSalary(){
+  const el=document.getElementById('salary-list');
+  if(!S.workers.length){el.innerHTML='<div class="empty">暂无工人</div>';return}
+  let total=0;
+  el.innerHTML=S.workers.map((w,wi)=>{
+    let wage=0,holdTotal=0;
+    const detail=S.types.map((t,ti)=>{
+      const ret=S.returns.filter(r=>r.wi===wi&&r.ti===ti).reduce((a,r)=>a+r.qty,0);
+      holdTotal+=getHold(wi,ti);wage+=ret*t.rate;
+      return ret>0?`${t.name} ${ret}件`:'';
+    }).filter(Boolean).join(' · ')||'暂无交货';
+    total+=wage;
+    return `<div class="salary-row">
+      <div>
+        <div style="font-weight:500">${w}</div>
+        <div class="salary-sub">${detail}</div>
+        ${holdTotal>0?`<div class="salary-sub" style="color:#BA7517">手持未交 ${holdTotal}件</div>`:''}
+      </div>
+      <div style="font-size:18px;font-weight:500;color:#27500A">¥${wage.toFixed(2)}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('salary-total').textContent=`合计 ¥${total.toFixed(2)}`;
+}
+
+function renderStock(){
+  const statsEl=document.getElementById('sv-stats');
+  let tOut=0,tRet=0,tWage=0;
+  S.types.forEach((t,ti)=>{
+    const out=S.takes.filter(x=>x.ti===ti).reduce((a,x)=>a+x.qty,0);
+    const ret=S.returns.filter(x=>x.ti===ti).reduce((a,x)=>a+x.qty,0);
+    tOut+=out;tRet+=ret;tWage+=ret*t.rate;
+  });
+  statsEl.innerHTML=`
+    <div class="stat"><div class="stat-val">${tOut}</div><div class="stat-lbl">总领出件</div></div>
+    <div class="stat"><div class="stat-val">${tRet}</div><div class="stat-lbl">总交回件</div></div>
+    <div class="stat"><div class="stat-val">${tOut-tRet}</div><div class="stat-lbl">工人手持</div></div>
+    <div class="stat"><div class="stat-val" style="color:#27500A">¥${tWage.toFixed(2)}</div><div class="stat-lbl">已结工资</div></div>`;
+
+  const typesEl=document.getElementById('sv-types');
+  typesEl.innerHTML=S.types.map((t,ti)=>{
+    const out=S.takes.filter(x=>x.ti===ti).reduce((a,x)=>a+x.qty,0);
+    const ret=S.returns.filter(x=>x.ti===ti).reduce((a,x)=>a+x.qty,0);
+    const left=t.stock-out,pct=Math.max(0,Math.min(100,left/t.stock*100));
+    const bc=pct>40?'bar-ok':pct>15?'bar-warn':'bar-err';
+    const tc=pct>40?'#27500A':pct>15?'#633806':'#A32D2D';
+    return `<div class="list-item" style="flex-direction:column;align-items:stretch;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="badge" style="background:${gc(ti)}22;color:${gc(ti)}">${t.name}</span>
+        <span style="font-size:13px;color:var(--color-text-secondary)">¥${t.rate}/件</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px">
+        <span>领出 <strong>${out}</strong></span>
+        <span>交回 <strong>${ret}</strong></span>
+        <span>手持 <strong>${out-ret}</strong></span>
+        <span style="color:${tc}">剩余 <strong>${left}</strong></span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar ${bc}" style="width:${pct.toFixed(1)}%"></div></div>
+    </div>`;
+  }).join('')||'<div class="empty">暂无货型</div>';
+
+  const wEl=document.getElementById('sv-workers');
+  if(!S.workers.length){wEl.innerHTML='<div class="empty">暂无工人</div>';return}
+  wEl.innerHTML=S.workers.map((w,wi)=>{
+    let total=0;
+    const detail=S.types.map((t,ti)=>{const h=getHold(wi,ti);total+=h;return h>0?`${t.name} ${h}件`:''}).filter(Boolean).join('、')||'无';
+    return `<div class="salary-row"><div><div style="font-weight:500">${w}</div><div class="salary-sub">${detail}</div></div><div style="font-size:16px;font-weight:500">${total}件</div></div>`;
+  }).join('');
+}
+
+function renderTypeList(){
+  const el=document.getElementById('type-list');
+  if(!S.types.length){el.innerHTML='<div class="empty" style="padding:12px">暂无货型</div>';return}
+  el.innerHTML=S.types.map((t,i)=>`
+    <div class="type-action-row">
+      <span style="width:8px;height:8px;border-radius:50%;background:${gc(i)};flex-shrink:0;display:inline-block"></span>
+      <span style="flex:1;font-weight:500;font-size:14px">${t.name}</span>
+      <span style="font-size:12px;color:var(--color-text-secondary)">¥${t.rate} · ${t.stock}件</span>
+      <button class="del-btn" onclick="removeType(${i})" aria-label="删除">×</button>
+    </div>`).join('');
+}
+
+function addType(){
+  const name=document.getElementById('nt-name').value.trim();
+  const rate=parseFloat(document.getElementById('nt-rate').value)||0;
+  const stock=parseInt(document.getElementById('nt-stock').value)||0;
+  if(!name||rate<=0||stock<=0){toast('请填写货型名、单价和库存',false);return}
+  S.types.push({name,rate,stock});save();
+  document.getElementById('nt-name').value='';
+  document.getElementById('nt-rate').value='';
+  document.getElementById('nt-stock').value='';
+  renderTypeList();refreshSelects();toast('已添加：'+name);
+}
+
+function removeType(i){
+  if(S.takes.some(x=>x.ti===i)||S.returns.some(x=>x.ti===i)){toast('已有记录，无法删除',false);return}
+  S.types.splice(i,1);
+  S.takes=S.takes.map(x=>({...x,ti:x.ti>i?x.ti-1:x.ti}));
+  S.returns=S.returns.map(x=>({...x,ti:x.ti>i?x.ti-1:x.ti}));
+  save();renderTypeList();refreshSelects();toast('已删除');
+}
+
+function renderWorkerTags(){
+  document.getElementById('worker-tags').innerHTML=S.workers.map((w,i)=>`
+    <span class="pill-tag">${w}<button class="del-btn" onclick="removeWorker(${i})" aria-label="删除 ${w}">×</button></span>`).join('');
+}
+
+function addWorker(){
+  const name=document.getElementById('nw-name').value.trim();
+  if(!name){toast('请输入姓名',false);return}
+  if(S.workers.includes(name)){toast('已存在',false);return}
+  S.workers.push(name);save();
+  document.getElementById('nw-name').value='';
+  renderWorkerTags();refreshSelects();toast('已添加：'+name);
+}
+
+function removeWorker(i){
+  if(S.takes.some(x=>x.wi===i)||S.returns.some(x=>x.wi===i)){toast('已有记录，无法删除',false);return}
+  S.workers.splice(i,1);save();renderWorkerTags();refreshSelects();
+}
+
+function clearAll(){
+  if(!confirm('确定清空所有数据？'))return;
+  S={types:[],workers:[],takes:[],returns:[]};save();
+  renderTypeList();renderWorkerTags();refreshSelects();renderTakeList();renderRetList();
+  toast('已清空');
+}
+
+function exportXlsx(){
+  const wb=XLSX.utils.book_new();
+  const t1=[['时间','工人','货型','数量'],...S.takes.map(t=>[t.time,S.workers[t.wi]??'',S.types[t.ti]?.name??'',t.qty])];
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(t1),'领货记录');
+  const t2=[['时间','工人','货型','数量'],...S.returns.map(r=>[r.time,S.workers[r.wi]??'',S.types[r.ti]?.name??'',r.qty])];
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(t2),'交货记录');
+  const sh=['工人',...S.types.map(t=>t.name+'已交'),'应得工资','手持未交'];
+  const sr=S.workers.map((w,wi)=>{let wage=0,hold=0;const cols=S.types.map((t,ti)=>{const r=S.returns.filter(x=>x.wi===wi&&x.ti===ti).reduce((a,x)=>a+x.qty,0);hold+=getHold(wi,ti);wage+=r*t.rate;return r});return[w,...cols,+wage.toFixed(2),hold]});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([sh,...sr]),'工资汇总');
+  const d=new Date(),fn=`台账_${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}.xlsx`;
+  XLSX.writeFile(wb,fn);toast('已导出 '+fn);
+}
+
+load();
+renderTypeList();renderWorkerTags();refreshSelects();renderTakeList();renderRetList();renderStockMini();
+</script>
